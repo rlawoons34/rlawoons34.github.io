@@ -16,7 +16,14 @@ intro:
 {% include feature_row id="intro" type="center" %}
 
 ## Title
+Welcome Our Website!!
 
-Body
+My name is Jae hun, Kim
+My major is Artificial Intelligence, at Hanyang University EriCa Campus
+
+I interested in LLM and Data Science
+
+Plz enjoy my website! THank you!
+
 
 ![collegeofcomputing](/assets/images/collegeofcomputing.jpg)
