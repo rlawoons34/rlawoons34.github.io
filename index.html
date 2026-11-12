@@ -41,7 +41,7 @@
   .menu a{font-size:14px;text-decoration:none;padding:12px 0}
 
   /* hero: comparison footage behind a soft black veil */
-  .hero{position:relative;height:100vh;min-height:560px;overflow:hidden;background:transparent;color:#fff}
+  .hero{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:transparent;color:#fff}
   .hero video,.hero canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .veil{position:absolute;inset:0;background:rgba(2,3,8,.5)}
   .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
@@ -56,21 +56,19 @@
   .sec{padding:160px 0 120px}
   .sec-title{margin:0 0 48px;font-family:var(--display);font-weight:400;font-size:clamp(36px,4.4vw,64px);letter-spacing:-.015em}
 
-  /* draggable project cards: title above media */
-  .drag-zone{overflow:hidden;padding:48px 0 32px;margin-top:-24px}
-  .track{display:flex;gap:32px;padding:0 40px;width:max-content;cursor:grab;touch-action:pan-y}
-  .track.grabbing{cursor:grabbing}
-  .card{width:min(80vw,460px);flex:0 0 auto;text-decoration:none;color:inherit;display:block;will-change:transform}
-  .card h3{margin:0 0 18px;font-family:var(--display);font-weight:400;font-size:clamp(26px,2.4vw,34px);letter-spacing:-.01em}
-  .thumb{background:var(--media);border:1px solid rgba(255,255,255,.1);border-radius:4px;aspect-ratio:4/3;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:box-shadow .35s}
+  /* project cards: all visible at once in a grid (4 across on desktop, 2 on phones) */
+  .proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:40px 28px}
+  .card{min-width:0;text-decoration:none;color:inherit;display:block;will-change:transform}
+  .card h3{margin:0 0 14px;font-family:var(--display);font-weight:400;font-size:clamp(20px,1.9vw,28px);letter-spacing:-.01em;line-height:1.2}
+  .thumb{background:var(--media);border:1px solid rgba(255,255,255,.1);border-radius:4px;aspect-ratio:4/3;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:box-shadow .35s,transform .35s,border-color .35s}
   .thumb .ph{font-size:12px;color:#7D8187;transition:filter .35s,opacity .35s}
   .thumb .view{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-style:italic;font-size:30px;color:#fff;opacity:0;transition:opacity .3s}
-  .card:hover .view,.card:focus-visible .view{opacity:1}
-  .card:hover .ph{filter:blur(4px);opacity:.4}
-  .card.lifted .thumb{box-shadow:0 34px 70px -24px rgba(0,0,0,.9),0 0 50px -10px rgba(120,140,255,.22);border-color:rgba(255,255,255,.22)}
-  .drag-ui{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
-  .drag-ui button{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:none;color:var(--ink);cursor:pointer;font-size:18px}
-  .drag-ui button:hover{border-color:var(--ink)}
+  .card:focus-visible .view{opacity:1}
+  @media (hover:hover){
+    .card:hover .view{opacity:1}
+    .card:hover .ph{filter:blur(4px);opacity:.4}
+    .card:hover .thumb{transform:translateY(-14px);box-shadow:0 34px 70px -24px rgba(0,0,0,.9),0 0 50px -10px rgba(120,140,255,.22);border-color:rgba(255,255,255,.22)}
+  }
 
   /* history: rows rise on scroll */
   .tl{position:relative}
@@ -101,13 +99,21 @@
   footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line);padding-top:28px}
 
   @media (max-width:720px){
-    .wrap{padding:0 22px} .track{padding:0 22px}
+    .wrap{padding:0 22px}
+    .proj-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 14px}
+    .card h3{font-size:17px;margin-bottom:10px}
+    .thumb .view{font-size:22px}
+    .hero .title{top:88px}
     .hero .temp{right:22px} .cue{display:none}
     .tl-line{left:0}
     .tl-item{grid-template-columns:1fr;gap:6px;padding-left:22px}
     .tl-item h3{padding-left:0}
     .era{padding:48px 0 64px}
     .era-list{gap:64px}
+  }
+  /* portrait screens: show the whole wide comparison video instead of cropping both players off */
+  @media (max-aspect-ratio:1/1){
+    .hero video{object-fit:contain}
   }
 </style>
 </head>
@@ -139,17 +145,13 @@
 
 <section class="sec" id="projects">
   <div class="wrap"><h2 class="sec-title">Projects</h2></div>
-  <div class="drag-zone">
-    <div class="track" id="track">
+  <div class="wrap">
+    <div class="proj-grid" id="track">
       <a class="card" href="#top"><h3>탁구 동작 비교 연구</h3><div class="thumb"><span class="ph">영상 자리</span><span class="view">View</span></div></a>
       <a class="card" href="#"><h3>Ratak</h3><div class="thumb"><span class="ph">이미지 자리</span><span class="view">View</span></div></a>
       <a class="card" href="#"><h3>무한소수 계산기</h3><div class="thumb"><span class="ph">이미지 자리</span><span class="view">View</span></div></a>
       <a class="card" href="#"><h3>PiCar 자동 미션</h3><div class="thumb"><span class="ph">영상 자리</span><span class="view">View</span></div></a>
     </div>
-  </div>
-  <div class="wrap drag-ui">
-    <button type="button" id="prevBtn" aria-label="이전 프로젝트">←</button>
-    <button type="button" id="nextBtn" aria-label="다음 프로젝트">→</button>
   </div>
 </section>
 
@@ -234,7 +236,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
 <script>
 (function(){
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -351,7 +352,7 @@
   });
 
   if(!window.gsap) return;
-  gsap.registerPlugin(ScrollTrigger,Draggable);
+  gsap.registerPlugin(ScrollTrigger);
 
   if(!reduce){
     gsap.from('#heroTitle',{y:60,opacity:0,duration:1.2,ease:'power4.out',delay:.2});
@@ -377,28 +378,6 @@
       gsap.from(item,{y:80,opacity:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:item,start:'top 90%',toggleActions:'play none none reverse'}});
     });
   } else { gsap.set('.tl-line',{scaleY:1}); }
-
-  // 드래그: 가운데 온 카드가 위로 떠오름
-  var track=document.getElementById('track'), zone=track.parentElement, cards=gsap.utils.toArray('.card');
-  function minX(){ return Math.min(0, zone.clientWidth-track.scrollWidth); }
-  function lift(){
-    var mid=zone.getBoundingClientRect().left+zone.clientWidth/2;
-    cards.forEach(function(c){
-      var r=c.getBoundingClientRect(), t=Math.max(0,1-Math.abs(r.left+r.width/2-mid)/(r.width*1.1));
-      if(!reduce) gsap.to(c.querySelector('.thumb'),{y:-36*t,duration:.45,ease:'power3.out',overwrite:'auto'});
-      c.classList.toggle('lifted',t>.5);
-    });
-  }
-  var drag=Draggable.create(track,{type:'x',bounds:{minX:minX(),maxX:0},edgeResistance:.85,dragClickables:true,
-    onPress:function(){track.classList.add('grabbing');},onRelease:function(){track.classList.remove('grabbing');},onDrag:lift})[0];
-  function go(dir){
-    var w=cards[0].getBoundingClientRect().width+32, x=gsap.utils.clamp(minX(),0,gsap.getProperty(track,'x')-dir*w);
-    gsap.to(track,{x:x,duration:reduce?0:.7,ease:'power3.out',onUpdate:lift,onComplete:function(){drag.update();lift();}});
-  }
-  document.getElementById('nextBtn').addEventListener('click',function(){go(1)});
-  document.getElementById('prevBtn').addEventListener('click',function(){go(-1)});
-  window.addEventListener('resize',function(){drag.applyBounds({minX:minX(),maxX:0});lift();});
-  lift();
 })();
 </script>
 </body>
