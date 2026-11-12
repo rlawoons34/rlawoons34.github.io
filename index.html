@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>김재훈 포트폴리오 시제품</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#04050A; --ink:#ECEEF3; --sub:#9AA1B0; --line:rgba(255,255,255,.12); --media:#0E1120; --accent:#FF9A45;
+    --display:'Instrument Serif','Hahmlet',serif;
+    --ui:'Inter Tight','IBM Plex Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink)}
+  body{font-family:var(--ui);-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+  .small{font-family:var(--ui);font-size:13px;letter-spacing:.04em;color:var(--sub)}
+
+  /* space: fixed layers behind everything, each moving at its own depth */
+  #space{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  #stars{position:absolute;inset:0;width:100%;height:100%}
+  .nebula{position:absolute;border-radius:50%;filter:blur(80px);will-change:transform}
+  .nebula.n1{width:60vw;height:60vw;left:-15vw;top:30vh;background:radial-gradient(circle,rgba(70,60,160,.32),transparent 65%)}
+  .nebula.n2{width:50vw;height:50vw;right:-12vw;top:-10vh;background:radial-gradient(circle,rgba(40,110,150,.26),transparent 65%)}
+  .nebula.n3{width:44vw;height:44vw;left:30vw;top:120vh;background:radial-gradient(circle,rgba(150,70,110,.18),transparent 65%)}
+  .planet{position:absolute;right:8vw;top:150vh;width:22vw;height:22vw;max-width:320px;max-height:320px;border-radius:50%;
+    background:radial-gradient(circle at 32% 30%,#2A3150 0%,#121628 55%,#070912 100%);box-shadow:inset -18px -14px 40px rgba(0,0,0,.6),0 0 60px rgba(90,110,200,.12);will-change:transform}
+  main,nav.top,footer{position:relative;z-index:1}
+
+  /* nav floats over the dark hero, then sits on the light page */
+  nav.top{position:fixed;inset:0 0 auto 0;z-index:30;color:#fff;transition:background .35s,color .35s,border-color .35s;border-bottom:1px solid transparent}
+  nav.top{position:fixed}
+  nav.top.solid{background:rgba(4,5,10,.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--ink);border-bottom-color:var(--line)}
+  nav.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:22px;padding-bottom:22px}
+  .logo{font-family:var(--display);font-size:26px;text-decoration:none;letter-spacing:-.01em}
+  .menu{display:flex;gap:28px}
+  .menu a{font-size:14px;text-decoration:none;padding:12px 0}
+
+  /* hero: comparison footage behind a soft black veil */
+  .hero{position:relative;height:100vh;min-height:560px;overflow:hidden;background:transparent;color:#fff}
+  .hero video,.hero canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .veil{position:absolute;inset:0;background:rgba(2,3,8,.5)}
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
+  .hero .title,.hero .cue,.hero .temp{z-index:2}
+  .hero .title{position:absolute;left:0;right:0;bottom:64px}
+  .hero h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(48px,8.5vw,136px);line-height:1.02;letter-spacing:-.02em}
+  .hero h1 em{font-style:italic}
+  .hero .temp{position:absolute;right:40px;top:84px;font-size:12px;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 12px}
+  .cue{position:absolute;right:40px;bottom:72px;font-size:13px;color:rgba(255,255,255,.75)}
+
+  section{scroll-margin-top:80px}
+  .sec{padding:160px 0 120px}
+  .sec-title{margin:0 0 48px;font-family:var(--display);font-weight:400;font-size:clamp(36px,4.4vw,64px);letter-spacing:-.015em}
+
+  /* draggable project cards: title above media */
+  .drag-zone{overflow:hidden;padding:48px 0 32px;margin-top:-24px}
+  .track{display:flex;gap:32px;padding:0 40px;width:max-content;cursor:grab;touch-action:pan-y}
+  .track.grabbing{cursor:grabbing}
+  .card{width:min(80vw,460px);flex:0 0 auto;text-decoration:none;color:inherit;display:block;will-change:transform}
+  .card h3{margin:0 0 18px;font-family:var(--display);font-weight:400;font-size:clamp(26px,2.4vw,34px);letter-spacing:-.01em}
+  .thumb{background:var(--media);border:1px solid rgba(255,255,255,.1);border-radius:4px;aspect-ratio:4/3;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:box-shadow .35s}
+  .thumb .ph{font-size:12px;color:#7D8187;transition:filter .35s,opacity .35s}
+  .thumb .view{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-style:italic;font-size:30px;color:#fff;opacity:0;transition:opacity .3s}
+  .card:hover .view,.card:focus-visible .view{opacity:1}
+  .card:hover .ph{filter:blur(4px);opacity:.4}
+  .card.lifted .thumb{box-shadow:0 34px 70px -24px rgba(0,0,0,.9),0 0 50px -10px rgba(120,140,255,.22);border-color:rgba(255,255,255,.22)}
+  .drag-ui{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+  .drag-ui button{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:none;color:var(--ink);cursor:pointer;font-size:18px}
+  .drag-ui button:hover{border-color:var(--ink)}
+
+  /* history: rows rise on scroll */
+  .tl{position:relative}
+  .tl-line{position:absolute;left:200px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,rgba(255,255,255,.9),rgba(140,160,255,.5));transform-origin:top;transform:scaleY(0)}
+  .tl-item{display:grid;grid-template-columns:200px 1fr;align-items:baseline;padding:30px 0;border-bottom:1px solid var(--line)}
+  .tl-item .when{font-size:14px;color:var(--sub);padding-right:20px}
+  .tl-item h3{margin:0;padding-left:44px;font-family:var(--display);font-weight:400;font-size:clamp(26px,2.8vw,40px);letter-spacing:-.01em;line-height:1.2}
+
+  /* archive: projects grouped by school year, sticky year label on the left */
+  #archive .sec-title{font-size:clamp(64px,11vw,168px);line-height:1;letter-spacing:-.03em;margin-bottom:64px}
+  .era{display:flex;flex-direction:column;gap:48px;padding:64px 0 80px;border-top:1px solid var(--line)}
+  .era-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px}
+  .era-head h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(26px,2.6vw,36px);letter-spacing:-.01em;line-height:1.1}
+  .era-head .ko{margin:0;font-size:14px;color:var(--sub)}
+  .era-head .why{flex:0 0 100%;margin:16px 0 0;padding-right:max(0px,calc(100% - 820px));font-family:var(--display);font-style:italic;font-size:18px;line-height:1.65;color:#C3C8D4}
+  .era-head .why b{display:block;font-family:var(--ui);font-style:normal;font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:8px}
+  .era-list{display:flex;flex-direction:column;gap:96px;min-width:0}
+  #archive{overflow-x:clip}
+  .work{transform-origin:50% 50%;will-change:transform,opacity}
+  .work h4{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(28px,3vw,42px);letter-spacing:-.01em;line-height:1.2}
+  .work .yr{display:block;margin:8px 0 22px;font-size:13px;color:var(--sub)}
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px}
+  .shots img{display:block;width:100%;height:auto;border-radius:4px;border:1px solid rgba(255,255,255,.1);background:var(--media)}
+  .shots video{display:block;width:100%;max-width:min(340px,calc((100vh - 260px) * 9 / 16));aspect-ratio:9/16;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,.1);background:var(--media)}
+  .shot-ph{aspect-ratio:16/9;border-radius:4px;border:1px dashed rgba(255,255,255,.22);background:rgba(14,17,32,.7);display:flex;align-items:center;justify-content:center;font-size:12px;color:#8E95A6}
+
+  footer{padding:120px 0 60px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line);padding-top:28px}
+
+  @media (max-width:720px){
+    .wrap{padding:0 22px} .track{padding:0 22px}
+    .hero .temp{right:22px} .cue{display:none}
+    .tl-line{left:0}
+    .tl-item{grid-template-columns:1fr;gap:6px;padding-left:22px}
+    .tl-item h3{padding-left:0}
+    .era{padding:48px 0 64px}
+    .era-list{gap:64px}
+  }
+</style>
+</head>
+<body>
+
+<div id="space" aria-hidden="true">
+  <div class="nebula n1" data-depth="0.08"></div>
+  <div class="nebula n2" data-depth="0.15"></div>
+  <div class="nebula n3" data-depth="0.22"></div>
+  <canvas id="stars"></canvas>
+  <div class="planet" data-depth="0.35"></div>
+</div>
+
+<nav class="top" aria-label="주요 메뉴">
+  <div class="wrap">
+    <a class="logo" href="#top">Kim Jae Hun</a>
+    <div class="menu"><a href="#projects">프로젝트</a><a href="#history">연혁</a><a href="#archive">상세</a></div>
+  </div>
+</nav>
+
+<main>
+<header class="hero" id="top">
+  <!-- 실제 영상이 준비되면 아래 주석을 풀고 canvas를 지웁니다.
+  <video src="assets/hero-compare.mp4" poster="assets/hero-compare.jpg" autoplay muted loop playsinline></video> -->
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="veil" id="veil"></div>
+  <span class="temp">임시 화면 · 실제 비교 영상으로 교체</span>
+  <div class="title"><div class="wrap"><h1 id="heroTitle">탁구 동작<br>비교 연구</h1></div></div>
+  <span class="cue" aria-hidden="true">↓</span>
+</header>
+
+<section class="sec" id="projects">
+  <div class="wrap"><h2 class="sec-title">Projects</h2></div>
+  <div class="drag-zone">
+    <div class="track" id="track">
+      <a class="card" href="#top"><h3>탁구 동작 비교 연구</h3><div class="thumb"><span class="ph">영상 자리</span><span class="view">View</span></div></a>
+      <a class="card" href="#"><h3>Ratak</h3><div class="thumb"><span class="ph">이미지 자리</span><span class="view">View</span></div></a>
+      <a class="card" href="#"><h3>무한소수 계산기</h3><div class="thumb"><span class="ph">이미지 자리</span><span class="view">View</span></div></a>
+      <a class="card" href="#"><h3>PiCar 자동 미션</h3><div class="thumb"><span class="ph">영상 자리</span><span class="view">View</span></div></a>
+    </div>
+  </div>
+  <div class="wrap drag-ui">
+    <button type="button" id="prevBtn" aria-label="이전 프로젝트">←</button>
+    <button type="button" id="nextBtn" aria-label="다음 프로젝트">→</button>
+  </div>
+</section>
+
+<section class="sec" id="history">
+  <div class="wrap">
+    <h2 class="sec-title">History</h2>
+    <div class="tl">
+      <div class="tl-line" aria-hidden="true"></div>
+      <div class="tl-item"><span class="when">2020</span><h3>KERIS AI 해커톤</h3></div>
+      <div class="tl-item"><span class="when">고등학교 2학년</span><h3>게임 습관과 실력의 상관관계 분석</h3></div>
+      <div class="tl-item"><span class="when">고등학교</span><h3>Adversarial Example 발표</h3></div>
+      <div class="tl-item"><span class="when">2025 겨울</span><h3>Ratak</h3></div>
+      <div class="tl-item"><span class="when">2025</span><h3>무한소수 계산기</h3></div>
+      <div class="tl-item"><span class="when">2026-1</span><h3>생산기술연구원 근로</h3></div>
+      <div class="tl-item"><span class="when">2026-2</span><h3>PiCar 자동 미션</h3></div>
+      <div class="tl-item"><span class="when">2026.09 —</span><h3>탁구 동작 비교 연구</h3></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="archive">
+  <div class="wrap">
+    <h2 class="sec-title">Archive</h2>
+
+    <div class="era">
+      <div class="era-head reveal-up">
+        <h3>High School</h3>
+        <p class="ko">고등학교</p>
+        <p class="why"><b>Why AI?</b>In high school, every question I cared about ended the same way: I wanted to check it myself, with data. Why does a model call a panda a gibbon? Do habits outside a game really decide who wins? How far can careful tuning push an image classifier? AI was where those questions could turn into things I build, so I chose the Department of Artificial Intelligence.</p>
+      </div>
+      <div class="era-list">
+        <article class="work">
+          <h4>KERIS AI 해커톤 2020</h4><span class="yr">2020</span>
+          <div class="shots"><div class="shot-ph">이미지 자리</div></div>
+        </article>
+        <article class="work">
+          <h4>게임 외적 요소와 승률의 상관관계 분석</h4><span class="yr">고등학교 2학년</span>
+          <div class="shots">
+            <img src="assets/hs-lol-1.jpg" alt="발표 슬라이드: 잘못된 결과를 낸 원인 세 가지(설문 오류, 정말 상관관계가 없을 가능성, 통계 처리 문제)" loading="lazy">
+            <img src="assets/hs-lol-2.jpg" alt="발표 슬라이드: 티어 분포 양극화, 평균의 함정, 피어슨 상관계수의 한계, 설문 데이터 폭의 오류" loading="lazy">
+          </div>
+        </article>
+        <article class="work">
+          <h4>Adversarial Example</h4><span class="yr">고등학교</span>
+          <div class="shots"><img src="assets/hs-adversarial.jpg" alt="발표 슬라이드: 판다 사진에 작은 노이즈를 더하면 모델이 긴팔원숭이로 인식하는 적대적 예제" loading="lazy" style="max-width:720px"></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-head reveal-up"><h3>Freshman</h3><p class="ko">대학교 1학년</p></div>
+      <div class="era-list">
+        <article class="work">
+          <h4>무한소수 계산기</h4><span class="yr">2025</span>
+          <div class="shots"><div class="shot-ph">이미지 자리</div></div>
+        </article>
+        <article class="work">
+          <h4>Ratak</h4><span class="yr">2025 겨울</span>
+          <div class="shots"><div class="shot-ph">이미지 자리</div></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-head reveal-up"><h3>Sophomore</h3><p class="ko">대학교 2학년</p></div>
+      <div class="era-list">
+        <article class="work">
+          <h4>PiCar 자동 미션</h4><span class="yr">2026-2</span>
+          <div class="shots"><video class="auto-video" src="assets/picar.mp4" poster="assets/picar-poster.jpg" muted loop playsinline preload="metadata" aria-label="PiCar가 물체를 집어 옮기는 주행 영상"></video></div>
+        </article>
+        <article class="work">
+          <h4>탁구 동작 비교 연구</h4><span class="yr">2026.09 —</span>
+          <div class="shots"><div class="shot-ph">영상 자리</div></div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span class="small">rlawogns34@hanyang.ac.kr</span><a class="small" href="https://github.com/rlawoons34">GitHub ↗</a></div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+<script>
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 우주 배경: 깊이가 다른 별 3겹 + 성운·행성 시차 ---------- */
+  var sc=document.getElementById('stars'), sx=sc.getContext('2d'), SW=0, SH=0, stars=[];
+  var layers=[{n:260,r:[.5,1],a:[.35,.7],depth:.06},{n:120,r:[.9,1.5],a:[.55,.9],depth:.16},{n:40,r:[1.4,2.2],a:[.8,1],depth:.32}];
+  function rand(a,b){ return a+Math.random()*(b-a); }
+  function sizeStars(){
+    SW=sc.clientWidth; SH=sc.clientHeight; sc.width=SW; sc.height=SH;
+    var area=SW*SH/(1440*900); stars=[];
+    layers.forEach(function(L,li){
+      for(var i=0;i<Math.round(L.n*Math.max(area,.5));i++)
+        stars.push({x:Math.random()*SW,y:Math.random()*SH*3,r:rand(L.r[0],L.r[1]),a:rand(L.a[0],L.a[1]),tw:rand(0,6.28),d:L.depth,li:li});
+    });
+  }
+  var scrollY0=window.scrollY, vel=0, mx=0, my=0, tmx=0, tmy=0;
+  window.addEventListener('pointermove',function(e){ tmx=(e.clientX/window.innerWidth-.5); tmy=(e.clientY/window.innerHeight-.5); });
+  var depthEls=[].slice.call(document.querySelectorAll('#space [data-depth]'));
+  function drawSpace(t){
+    var y=window.scrollY; vel+=((y-scrollY0)-vel)*.15; scrollY0=y;
+    mx+=(tmx-mx)*.05; my+=(tmy-my)*.05;
+    sx.clearRect(0,0,SW,SH);
+    var span=SH*3;
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i];
+      var py=((s.y - y*s.d - my*40*s.d*3) % span + span) % span;
+      if(py>SH+4) continue;
+      var px=s.x - mx*60*s.d*3;
+      var tw=reduce?1:(.75+.25*Math.sin(t/900+s.tw));
+      var streak=reduce?0:Math.min(Math.abs(vel)*s.d*1.6,26);
+      sx.globalAlpha=s.a*tw;
+      if(streak>1.2){
+        sx.strokeStyle='#DDE3FF'; sx.lineWidth=s.r*1.4; sx.lineCap='round';
+        sx.beginPath(); sx.moveTo(px,py); sx.lineTo(px,py+(vel>0?streak:-streak)); sx.stroke();
+      } else {
+        sx.fillStyle=s.li===2?'#FFF4E6':'#DDE3FF'; sx.beginPath(); sx.arc(px,py,s.r,0,7); sx.fill();
+      }
+    }
+    sx.globalAlpha=1;
+    depthEls.forEach(function(el){
+      var d=parseFloat(el.getAttribute('data-depth'));
+      el.style.transform='translate3d('+(-mx*80*d)+'px,'+(-y*d-my*50*d)+'px,0)';
+    });
+  }
+  sizeStars(); window.addEventListener('resize',sizeStars);
+
+  /* ---------- 임시 히어로 화면: 두 골격(참고 선수 초록, 나 빨강)과 공 ---------- */
+  // 메뉴: 히어로를 지나면 반투명 바탕으로 바뀜
+  var nav=document.querySelector('nav.top'), heroEl=document.querySelector('.hero');
+  new IntersectionObserver(function(es){ nav.classList.toggle('solid',!es[0].isIntersecting); },{rootMargin:'-70px 0px 0px 0px'}).observe(heroEl);
+
+  var cv=document.getElementById('heroCanvas'), ctx=cv.getContext('2d'), W=0, H=0, heroVisible=true;
+  function size(){ W=cv.clientWidth; H=cv.clientHeight; cv.width=W; cv.height=H; }
+  new IntersectionObserver(function(es){ heroVisible=es[0].isIntersecting; }).observe(heroEl);
+  function ease(x){ return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2; }
+  function pose(p, wob){
+    // p: 0..1 스윙 단계. 뒤로 낮게 뺐다가 앞으로 올려 치는 포핸드
+    var back=2.5, through=-0.9, s=p<.55? ease(p/.55) : 1-ease((p-.55)/.45);
+    var arm=back+(through-back)*s+wob, torso=-0.2+0.35*s;
+    return {torso:torso, upper:arm, fore:arm-0.6+0.4*s, kneeL:0.35, kneeR:0.25+0.15*s};
+  }
+  function figure(cx, cy, k, p, color, wob){
+    var q=pose(p,wob), j={};
+    j.hip=[cx,cy];
+    j.neck=[cx+Math.sin(q.torso)*55*k, cy-Math.cos(q.torso)*55*k];
+    j.head=[j.neck[0]+Math.sin(q.torso)*16*k, j.neck[1]-16*k];
+    j.elbow=[j.neck[0]+Math.cos(q.upper)*30*k, j.neck[1]+Math.sin(q.upper)*30*k];
+    j.wrist=[j.elbow[0]+Math.cos(q.fore)*28*k, j.elbow[1]+Math.sin(q.fore)*28*k];
+    j.elbow2=[j.neck[0]-22*k, j.neck[1]+20*k]; j.wrist2=[j.elbow2[0]+10*k, j.elbow2[1]+22*k];
+    j.kneeL=[cx-14*k, cy+34*k]; j.ankleL=[cx-26*k+Math.sin(q.kneeL)*8*k, cy+70*k];
+    j.kneeR=[cx+16*k, cy+32*k]; j.ankleR=[cx+30*k, cy+70*k];
+    var bones=[['hip','neck'],['neck','elbow'],['elbow','wrist'],['neck','elbow2'],['elbow2','wrist2'],['hip','kneeL'],['kneeL','ankleL'],['hip','kneeR'],['kneeR','ankleR']];
+    ctx.strokeStyle=color; ctx.lineWidth=3*Math.max(k,.6); ctx.lineCap='round';
+    bones.forEach(function(b){ ctx.beginPath(); ctx.moveTo(j[b[0]][0],j[b[0]][1]); ctx.lineTo(j[b[1]][0],j[b[1]][1]); ctx.stroke(); });
+    ctx.fillStyle=color;
+    Object.keys(j).forEach(function(n){ if(n==='head')return; ctx.beginPath(); ctx.arc(j[n][0],j[n][1],3.6*Math.max(k,.6),0,7); ctx.fill(); });
+    ctx.beginPath(); ctx.arc(j.head[0],j.head[1],11*k,0,7); ctx.stroke();
+    return j;
+  }
+  function frame(t){
+    ctx.clearRect(0,0,W,H);
+    var k=Math.min(W,H)/430, cy=H*.42, floor=cy+70*k;
+    // 바닥선
+    ctx.strokeStyle='rgba(255,255,255,.28)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(W*.3,floor); ctx.lineTo(W*.95,floor); ctx.stroke();
+    var p=(t/2400)%1;
+    figure(W*.52, cy, k, p, 'rgba(92,214,140,.95)', 0);
+    var u=figure(W*.74, cy, k, (p+0.94)%1, 'rgba(255,92,92,.95)', 0.18);
+    // 공: 오른쪽에서 날아와 타점에서 맞고 돌아감
+    var bx, by, start=[W*.98, cy-30*k];
+    if(p<.55){ var a=p/.55; bx=start[0]+(u.wrist[0]-start[0])*a; by=start[1]+(u.wrist[1]-start[1])*a-Math.sin(a*Math.PI)*50*k; }
+    else { var b=(p-.55)/.45; bx=u.wrist[0]+(W*1.02-u.wrist[0])*b; by=u.wrist[1]-Math.sin(b*Math.PI)*80*k; }
+    ctx.fillStyle='#FF9A45'; ctx.beginPath(); ctx.arc(bx,by,5*Math.max(k,.8),0,7); ctx.fill();
+  }
+  size(); window.addEventListener('resize',size);
+  if(reduce){ frame(900); drawSpace(0); window.addEventListener('scroll',function(){ drawSpace(0); },{passive:true}); }
+  else {
+    var last=0, lastS=0;
+    (function loop(t){
+      requestAnimationFrame(loop);
+      if(t-lastS>=16){ lastS=t; drawSpace(t); }
+      if(heroVisible && t-last>=33){ last=t; frame(t); }
+    })(0);
+  }
+
+  // 영상: 화면에 절반 이상 보이면 자동 재생, 벗어나면 멈춤
+  document.querySelectorAll('.auto-video').forEach(function(v){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
+        else v.pause();
+      });
+    },{threshold:.5}).observe(v);
+  });
+
+  if(!window.gsap) return;
+  gsap.registerPlugin(ScrollTrigger,Draggable);
+
+  if(!reduce){
+    gsap.from('#heroTitle',{y:60,opacity:0,duration:1.2,ease:'power4.out',delay:.2});
+    // 스크롤하면 가림막이 짙어지며 다음 화면으로
+    gsap.to('#veil',{backgroundColor:'rgba(0,0,0,.85)',ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+    gsap.to('#heroTitle',{y:-80,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+    gsap.utils.toArray('.sec-title').forEach(function(el){
+      gsap.from(el,{y:50,opacity:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none reverse'}});
+    });
+    gsap.from('.card',{y:80,opacity:0,duration:1,ease:'power3.out',stagger:.08,scrollTrigger:{trigger:'#track',start:'top 85%'}});
+    gsap.to('.tl-line',{scaleY:1,ease:'none',scrollTrigger:{trigger:'.tl',start:'top 70%',end:'bottom 70%',scrub:true}});
+    document.querySelectorAll('.shots img').forEach(function(img){ img.addEventListener('load',function(){ ScrollTrigger.refresh(); }); });
+    gsap.utils.toArray('.reveal-up').forEach(function(item){
+      gsap.from(item,{y:80,opacity:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:item,start:'top 90%',toggleActions:'play none none reverse'}});
+    });
+    // 상세 프로젝트: 화면 가운데에 올수록 앞으로 다가오고(확대), 지나가면 다시 물러남
+    gsap.utils.toArray('.work').forEach(function(w){
+      gsap.timeline({scrollTrigger:{trigger:w,start:'top bottom',end:'bottom top',scrub:.6}})
+        .fromTo(w,{scale:.82,opacity:.3,y:60},{scale:1.04,opacity:1,y:0,ease:'power2.out',duration:1})
+        .to(w,{scale:.82,opacity:.3,y:-60,ease:'power2.in',duration:1});
+    });
+    gsap.utils.toArray('.tl-item').forEach(function(item){
+      gsap.from(item,{y:80,opacity:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:item,start:'top 90%',toggleActions:'play none none reverse'}});
+    });
+  } else { gsap.set('.tl-line',{scaleY:1}); }
+
+  // 드래그: 가운데 온 카드가 위로 떠오름
+  var track=document.getElementById('track'), zone=track.parentElement, cards=gsap.utils.toArray('.card');
+  function minX(){ return Math.min(0, zone.clientWidth-track.scrollWidth); }
+  function lift(){
+    var mid=zone.getBoundingClientRect().left+zone.clientWidth/2;
+    cards.forEach(function(c){
+      var r=c.getBoundingClientRect(), t=Math.max(0,1-Math.abs(r.left+r.width/2-mid)/(r.width*1.1));
+      if(!reduce) gsap.to(c.querySelector('.thumb'),{y:-36*t,duration:.45,ease:'power3.out',overwrite:'auto'});
+      c.classList.toggle('lifted',t>.5);
+    });
+  }
+  var drag=Draggable.create(track,{type:'x',bounds:{minX:minX(),maxX:0},edgeResistance:.85,dragClickables:true,
+    onPress:function(){track.classList.add('grabbing');},onRelease:function(){track.classList.remove('grabbing');},onDrag:lift})[0];
+  function go(dir){
+    var w=cards[0].getBoundingClientRect().width+32, x=gsap.utils.clamp(minX(),0,gsap.getProperty(track,'x')-dir*w);
+    gsap.to(track,{x:x,duration:reduce?0:.7,ease:'power3.out',onUpdate:lift,onComplete:function(){drag.update();lift();}});
+  }
+  document.getElementById('nextBtn').addEventListener('click',function(){go(1)});
+  document.getElementById('prevBtn').addEventListener('click',function(){go(-1)});
+  window.addEventListener('resize',function(){drag.applyBounds({minX:minX(),maxX:0});lift();});
+  lift();
+})();
+</script>
+</body>
+</html>
