@@ -130,11 +130,9 @@
 
 <main>
 <header class="hero" id="top">
-  <!-- 실제 영상이 준비되면 아래 주석을 풀고 canvas를 지웁니다.
-  <video src="assets/hero-compare.mp4" poster="assets/hero-compare.jpg" autoplay muted loop playsinline></video> -->
-  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <video src="assets/hero-compare.mp4" poster="assets/hero-compare.jpg" autoplay muted loop playsinline aria-label="탁구 동작 관절 모델 비교 영상"></video>
+  <canvas id="heroCanvas" aria-hidden="true" style="display:none"></canvas>
   <div class="veil" id="veil"></div>
-  <span class="temp">임시 화면 · 실제 비교 영상으로 교체</span>
   <div class="title"><div class="wrap"><h1 id="heroTitle">탁구 동작<br>비교 연구</h1></div></div>
   <span class="cue" aria-hidden="true">↓</span>
 </header>
@@ -220,7 +218,7 @@
       <div class="era-list">
         <article class="work">
           <h4>PiCar 자동 미션</h4><span class="yr">2026-2</span>
-          <div class="shots"><div class="shot-ph">영상 자리</div></div>
+          <div class="shots"><video class="auto-video" src="assets/picar.mp4" poster="assets/picar-poster.jpg" muted loop playsinline preload="metadata" aria-label="PiCar가 물체를 집어 옮기는 주행 영상"></video></div>
         </article>
         <article class="work">
           <h4>탁구 동작 비교 연구</h4><span class="yr">2026.09 —</span>
@@ -339,7 +337,6 @@
     (function loop(t){
       requestAnimationFrame(loop);
       if(t-lastS>=16){ lastS=t; drawSpace(t); }
-      if(heroVisible && t-last>=33){ last=t; frame(t); }
     })(0);
   }
 
